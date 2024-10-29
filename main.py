@@ -246,8 +246,8 @@ def run(item: Item, myIp: str):
 
     if not validate_file_exists(input_file_path, item):
         return True
+    # delete_class_and_nav(input_file_path)
 
-    delete_class_and_nav(input_file_path)
     s3 = boto3.resource('s3')
     try:
         s3.meta.client.upload_file(
