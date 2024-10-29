@@ -836,25 +836,45 @@ chrome.action.onClicked.addListener(
 //       });
       
 
+// Tentukan daftar URL yang diizinkan
+const allowedUrls = [
+    "https://www.chegg.com",
+    "https://justpri.com"
+];
+
 chrome.webNavigation.onDOMContentLoaded.addListener(function(details) {
     console.log("onDOMContentLoaded triggered");
+
+    // Periksa apakah halaman utama dimuat
     if (details.frameId === 0) {
         console.log("Main frame loaded");
-        setTimeout(() => {
-            console.log("Timeout reached");
-            chrome.storage.local.get(null, function(local) {
-                console.log("Retrieved local storage:", local);
-                initiateAction(
-                    local["options-buttonactiontype"],
-                    local["options-buttonactionitems"],
-                    false,
-                    null,
-                    false,
-                    false,
-                    local
-                );
-            });
-        }, 1000);
+
+        // Periksa apakah URL saat ini termasuk dalam daftar URL yang diizinkan
+        const urlIsAllowed = allowedUrls.some((allowedUrl) => details.url.startsWith(allowedUrl));
+
+        if (urlIsAllowed) {
+            // Jika diizinkan, lakukan tindakan
+            console.log("URL is allowed:", details.url);
+            setTimeout(() => {
+                console.log("Timeout reached");
+                chrome.storage.local.get(null, function(local) {
+                    console.log("Retrieved local storage:", local);
+                    initiateAction(
+                        local["options-buttonactiontype"],
+                        local["options-buttonactionitems"],
+                        false,
+                        null,
+                        false,
+                        false,
+                        local
+                    );
+                });
+            }, 1000);
+        } else {
+            // Jika tidak diizinkan, log URL atau lakukan tindakan lain seperti notifikasi
+            console.log("URL is not allowed:", details.url);
+            // Anda bisa menambahkan kode notifikasi atau menghentikan pemrosesan di sini
+        }
     } else {
         console.log("Not main frame:", details.frameId);
     }
