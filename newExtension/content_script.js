@@ -40,57 +40,56 @@ function showErrorPopup(title, message) {
   }
 
 // Fungsi utama untuk mencari elemen terakhir di daftar pesan dan menangani kondisi "berhasil" atau "error"
-function findLastElement() {
-    // Ambil semua elemen pesan di daftar, dengan class .messageListItem_d5deea
-    const messages = document.querySelectorAll('.messageListItem_d5deea');
-    const lastMessage = messages[messages.length - 1]; // Ambil elemen terakhir
-  
-    if (lastMessage) {
-      console.log('Pesan terakhir ditemukan:', lastMessage);
-  
-      // Cek apakah ini adalah pesan error berdasarkan ikon ⚠️ atau teks tertentu di dalam pesan
-      const isErrorElement = lastMessage.querySelector('.emojiContainer_bae8cb img[aria-label="⚠️"]') ||
-                             lastMessage.textContent.includes("'NoneType' object has no attribute 'group'");
-  
-      if (isErrorElement) {
-        // Jika elemen terakhir adalah pesan error, tampilkan popup error
-        showErrorPopup("Error Message", "An error occurred: 'NoneType' object has no attribute 'group'");
-        return; // Hentikan eksekusi di sini jika ini pesan error
-      }
-  
-      // Jika bukan error, cek apakah pesan mengandung teks "sistemmanufaktur"
-      const authorElement = lastMessage.querySelector('.embedAuthorName_b0068a');
+function findElementWithText() {
+  // Ambil semua elemen pesan di daftar, dengan class .messageListItem_d5deea
+  const messages = document.querySelectorAll('.messageListItem_d5deea');
+
+  // Loop melalui semua pesan untuk mencari teks "sistemmanufaktur"
+  let targetMessage = null;
+  messages.forEach((message) => {
+      const authorElement = message.querySelector('.embedAuthorName_b0068a');
+    
+      // Cek apakah pesan mengandung teks "sistemmanufaktur"
       if (authorElement && authorElement.textContent.trim() === 'sistemmanufaktur') {
-        console.log('Elemen terakhir dengan teks "sistemmanufaktur" ditemukan:', lastMessage);
-  
-        // Cari tombol "View Answer" di dalam elemen terakhir yang ditemukan
-        const button = lastMessage.querySelector('button.button_dd4f85.lookFilled_dd4f85.colorPrimary_dd4f85.sizeSmall_dd4f85.grow_dd4f85');
-        if (button) {
+          targetMessage = message;
+      }
+  });
+
+  if (targetMessage) {
+      console.log('Elemen dengan teks "sistemmanufaktur" ditemukan:', targetMessage);
+    
+      // Cek apakah ini adalah pesan error berdasarkan ikon ⚠️ atau teks tertentu di dalam pesan
+      const isErrorElement = targetMessage.querySelector('.emojiContainer_bae8cb img[aria-label="⚠️"]') ||
+                             targetMessage.textContent.includes("'NoneType' object has no attribute 'group'");
+    
+      if (isErrorElement) {
+          // Jika elemen adalah pesan error, tampilkan popup error
+          showErrorPopup("Error Message", "An error occurred: 'NoneType' object has no attribute 'group'");
+          return; // Hentikan eksekusi di sini jika ini pesan error
+      }
+    
+      // Cari tombol "View Answer" di dalam elemen yang ditemukan
+      const button = targetMessage.querySelector('button.button_dd4f85.lookFilled_dd4f85.colorPrimary_dd4f85.sizeSmall_dd4f85.grow_dd4f85');
+      if (button) {
           console.log('Tombol "View Answer" ditemukan:', button);
-  
+        
           // Fokuskan tombol
           button.focus();
-  
+        
           // Simulasikan klik pada tombol
           button.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
           button.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
           button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-  
+        
           console.log('Event klik telah berhasil disimulasikan.');
-        } else {
-          console.log('Tombol "View Answer" tidak ditemukan di dalam elemen yang sesuai.');
-        }
       } else {
-        console.log('Pesan terakhir tidak mengandung teks "sistemmanufaktur".');
+          console.log('Tombol "View Answer" tidak ditemukan di dalam elemen yang sesuai.');
       }
-    } else {
-      console.log('Tidak ada elemen pesan yang ditemukan.');
-    }
+  } else {
+      console.log('Tidak ada elemen pesan yang mengandung teks "sistemmanufaktur".');
   }
-  
-  
-  
-  
+}
+
   // Mendengarkan pesan dari popup.js untuk menjalankan fungsi
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'findLastElement') {
