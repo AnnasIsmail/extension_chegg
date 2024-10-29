@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>URL Redirector</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Popup</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h3>Buka URL</h3>
-  <input type="text" id="urlInput" placeholder="Masukkan URL">
-  <button id="openUrl">Buka</button>
+    <div class="popup-container">
+        <h1 id="popupTitle">Default Title</h1>
+        <p id="popupMessage">Default message content goes here.</p>
+        <button id="popupButton">OK</button>
+    </div>
+    <script src="popup.js"></script>
 </body>
-<script src="popup.js"></script>
 </html>
