@@ -12,6 +12,7 @@ def upload_image_to_s3(file_path, bucket_name, object_name):
             Bucket=bucket_name,
             Key=object_name,
             ExtraArgs={
+                'ACL': 'public-read',
                 'ContentType': 'image/jpeg',              # Set Content-Type
                 'ContentDisposition': 'inline'            # Set Content-Disposition
             }
