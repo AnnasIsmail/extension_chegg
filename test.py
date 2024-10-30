@@ -14,7 +14,7 @@ import subprocess
 import pygetwindow as gw
 
 def is_save_as_window_open() -> bool:
-    return "Save As" in pyautogui.getAllTitles()
+    return "Not Answer" in pyautogui.getAllTitles()
 
 def is_error_page_open() -> bool:
     return "Error Page" in pyautogui.getAllTitles()

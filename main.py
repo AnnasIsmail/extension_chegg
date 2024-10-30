@@ -29,9 +29,15 @@ def is_save_as_window_open() -> bool:
 def is_error_page_open() -> bool:
     return "Error Page" in pyautogui.getAllTitles()
 
+def is_error_link() -> bool:
+    return "Error Link" in pyautogui.getAllTitles()
+
+def is_not_answered() -> bool:
+    return "Not Answer" in pyautogui.getAllTitles()
+
 def wait_for_save_as_or_error_page_window(timeout=60) -> bool:
     start_time = time.time()
-    while not is_save_as_window_open() and not is_error_page_open():
+    while not is_save_as_window_open() and not is_error_page_open() and not is_error_link() and not is_not_answered():
         if time.time() - start_time > timeout:
             return False
         time.sleep(1)
@@ -195,7 +201,31 @@ def run(item: Item, myIp: str):
                 requests.post(url_telegram, json=payload_telegram_bot)
                 report_error("Failed to open Save As or Error page", "run", item)
                 return True
-                
+        
+        if is_error_link():
+            pyautogui.hotkey('enter')
+            url_telegram = 'https://api.telegram.org/bot6740331088:AAHkgEEOjVkKLBhvpcHhTZw-o4Iq7CM4pzc/sendMessage'
+            aws_string = 'We experienced error issue, please make sure the url is valid. Thank you'
+            payload_telegram_bot = {
+                'chat_id': item.chatId,
+                'text': aws_string
+            }
+            requests.post(url_telegram, json=payload_telegram_bot)
+            report_error("error link from user", "run", item)
+            return True
+
+        if is_not_answered():
+            pyautogui.hotkey('enter')
+            url_telegram = 'https://api.telegram.org/bot6740331088:AAHkgEEOjVkKLBhvpcHhTZw-o4Iq7CM4pzc/sendMessage'
+            aws_string = "This question hasn't been solved yet. Thank you"
+            payload_telegram_bot = {
+                'chat_id': item.chatId,
+                'text': aws_string
+            }
+            requests.post(url_telegram, json=payload_telegram_bot)
+            report_error("error link from user", "run", item)
+            return True
+
         time.sleep(1)
         pyautogui.typewrite(id_update)
         pyautogui.press('enter')

@@ -2716,10 +2716,19 @@ function enterComments()
 
 /* Third Pass - to generate HTML and save to file */
 
-document.addEventListener('DOMContentLoaded', () => {
-    const elements = document.querySelectorAll('.bLMDRH');
-    elements.forEach(element => element.remove());
-    console.log(`${elements.length} elemen dengan class 'lmxvvx-1 cTfeDN' telah dihapus.`);
+const allowedUrls = [
+    "https://www.chegg.com",
+    "https://justpri.com"
+];
+
+document.addEventListener('DOMContentLoaded', (details) => {
+    const urlIsAllowed = allowedUrls.some((allowedUrl) => details.url.startsWith(allowedUrl));
+
+    if (urlIsAllowed) {
+        const elements = document.querySelectorAll('.bLMDRH');
+        elements.forEach(element => element.remove());
+        console.log(`${elements.length} elemen dengan class 'lmxvvx-1 cTfeDN' telah dihapus.`);
+    }
   });
 
   function removeElementsByClass() {

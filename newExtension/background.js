@@ -1,34 +1,56 @@
 "use strict";
 
-function showPopup() {
+function showPopup(name) {
+  console.log(name)
     chrome.windows.create({
-        url: chrome.runtime.getURL("popup.html"), 
+        url: chrome.runtime.getURL(`${name}.html`), 
         type: "popup",
         width: 400,
         height: 300
     });
 }
 
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.action === 'errorWindow') {
+    showPopup("errorLink")
+  }
+  if (request.action === 'notAnswerWindow') {
+    showPopup("notAnswered")
+  }
+});
+
 // const allowedUrls = [
 //     "discord.com"
 // ];
 
 chrome.action.onClicked.addListener(
-function(tab)
-{
-    console.log("Click");
-    chrome.tabs.sendMessage(tabs[0].id, { action: 'findLastElement', text: inputText }, (response) => {
-        if (chrome.runtime.lastError) {
-          console.error("Content script tidak ditemukan di tab aktif:", chrome.runtime.lastError.message);
-          alert("Content script tidak ditemukan di tab aktif. Pastikan Anda berada di halaman yang sesuai.");
-        } else if (response && response.status === 'success') {
-          console.log(response.message);
-        } else {
-          console.log('Pesan gagal dikirim atau tidak ada respons.');
-        }
-        window.close();
+  function(tab)
+  {
+      chrome.storage.local.get(null,
+      function(local)
+      {
+          // initiateAction(local["options-buttonactiontype"],local["options-buttonactionitems"],false,null,false,false,local);
+          console.log("Click");
       });
-});
+  });
+
+
+// chrome.action.onClicked.addListener(
+// function(tab)
+// {
+//     window.close();
+//     console.log("Click");
+    // chrome.tabs.sendMessage(tabs[0].id, { action: 'findLastElement', text: inputText }, (response) => {
+    //     if (chrome.runtime.lastError) {
+    //       console.error("Content script tidak ditemukan di tab aktif:", chrome.runtime.lastError.message);
+    //       alert("Content script tidak ditemukan di tab aktif. Pastikan Anda berada di halaman yang sesuai.");
+    //     } else if (response && response.status === 'success') {
+    //       console.log(response.message);
+    //     } else {
+    //       console.log('Pesan gagal dikirim atau tidak ada respons.');
+    //     }
+    //   });
+// });
 
 chrome.webNavigation.onDOMContentLoaded.addListener(function(details) {
     console.log("onDOMContentLoaded triggered");
@@ -49,20 +71,20 @@ chrome.webNavigation.onDOMContentLoaded.addListener(function(details) {
 });
 
 // Listener untuk klik icon extension
-chrome.action.onClicked.addListener((tab) => {
-    // Mengirim pesan ke content script di tab aktif
-    chrome.tabs.sendMessage(tab.id, { action: 'findLastElement' });
-  });
+// chrome.action.onClicked.addListener((tab) => {
+//     // Mengirim pesan ke content script di tab aktif
+//     chrome.tabs.sendMessage(tab.id, { action: 'findLastElement' });
+//   });
   
   // Listener untuk shortcut keyboard yang didefinisikan di manifest.json
   chrome.commands.onCommand.addListener((command) => {
-    if (command === '_execute_action') {
-      // Mengambil tab aktif untuk mengirim pesan ke content script
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs[0]) {
-          chrome.tabs.sendMessage(tabs[0].id, { action: 'findLastElement' });
-        }
-      });
-    }
+    // if (command === '_execute_action') {
+    //   // Mengambil tab aktif untuk mengirim pesan ke content script
+    //   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    //     if (tabs[0]) {
+    //       chrome.tabs.sendMessage(tabs[0].id, { action: 'findLastElement' });
+    //     }
+    //   });
+    // }
   });
   

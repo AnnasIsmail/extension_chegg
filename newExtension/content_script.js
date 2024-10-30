@@ -1,73 +1,17 @@
-function showErrorPopup() {
-  chrome.storage.sync.set({ popupStatus: 'error' }, function() {
-      console.log("Popup set to error.");
-  });
-}
-
-function showNotAnsweredPopup() {
-  chrome.storage.sync.set({ popupStatus: 'notAnswered' }, function() {
-      console.log("Popup set to not answered.");
-  });
-}
-
-// Fungsi untuk menampilkan popup error
-// function showErrorPopup(title, message) {
-//     const errorPopup = document.createElement('div');
-//     errorPopup.style.position = 'fixed';
-//     errorPopup.style.top = '10%';
-//     errorPopup.style.left = '50%';
-//     errorPopup.style.transform = 'translateX(-50%)';
-//     errorPopup.style.backgroundColor = '#f8d7da';
-//     errorPopup.style.color = '#721c24';
-//     errorPopup.style.padding = '20px';
-//     errorPopup.style.borderRadius = '8px';
-//     errorPopup.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.2)';
-//     errorPopup.style.zIndex = '10000';
-  
-//     const titleElement = document.createElement('h3');
-//     titleElement.textContent = title;
-//     titleElement.style.margin = '0 0 10px 0';
-  
-//     const messageElement = document.createElement('p');
-//     messageElement.textContent = message;
-//     messageElement.style.margin = '0';
-  
-//     const closeButton = document.createElement('button');
-//     closeButton.textContent = 'Close';
-//     closeButton.style.marginTop = '10px';
-//     closeButton.style.backgroundColor = '#f5c6cb';
-//     closeButton.style.border = 'none';
-//     closeButton.style.padding = '5px 10px';
-//     closeButton.style.borderRadius = '4px';
-//     closeButton.style.cursor = 'pointer';
-  
-//     closeButton.addEventListener('click', () => {
-//       document.body.removeChild(errorPopup);
-//     });
-  
-//     errorPopup.appendChild(titleElement);
-//     errorPopup.appendChild(messageElement);
-//     errorPopup.appendChild(closeButton);
-//     document.body.appendChild(errorPopup);
-//   }
-
   function findLastElement() {
     // Ambil semua elemen pesan di daftar, dengan class .messageListItem_d5deea
     const messages = document.querySelectorAll('.messageListItem_d5deea');
-  
+    let message = null;
+
     if (messages.length > 0) {
       let answered = null;
       let linkError = null
       let notAnswer = null;
 
       messages.forEach((x, index) => {
-        const linkErrorIn = x.querySelector('.emojiContainer_bae8cb img[aria-label="⚠️"]') ||
-        x.textContent.includes("'NoneType' object has no attribute 'group'");
-
-        const notAnswerIn = x.querySelector('.emojiContainer_bae8cb img[aria-label="😔"]') ||
-        x.textContent.includes("I encountered an issue: Not Answered Yet!!");
-
-        const answeredIn = x.querySelector('.embedAuthorName_b0068a');
+        const linkErrorIn = (x.querySelector('.emojiContainer_bae8cb img[aria-label="⚠️"]') || x.textContent.includes("'NoneType' object has no attribute 'group'")) && x.querySelector('.mention')?.innerText === '@sistemmanufaktur';
+        const notAnswerIn = (x.querySelector('.emojiContainer_bae8cb img[aria-label="😔"]') || x.textContent.includes("I encountered an issue: Not Answered Yet!!")) && x.querySelector('.mention')?.innerText === '@sistemmanufaktur';
+        const answeredIn = x.querySelector('.embedAuthorName_b0068a')?.textContent.trim() === 'sistemmanufaktur';
 
         if(linkErrorIn){
           answered = null;
@@ -81,32 +25,33 @@ function showNotAnsweredPopup() {
           notAnswer = notAnswerIn;
         }
 
-        if(answered){
+        if(answeredIn){
+          message = x;
           answered = answeredIn;
           linkError = null;
           notAnswer = null;
         }
       })
 
-      console.log(answered, linkError, notAnswer)
-  
       if (linkError) {
-        // Jika elemen terakhir adalah pesan error, tampilkan popup error
-        showErrorPopup();       
-        // showErrorPopup("Error Message", "An error occurred: 'NoneType' object has no attribute 'group'");
-        return; // Hentikan eksekusi di sini jika ini pesan error
+        chrome.runtime.sendMessage({ action: 'errorWindow' }, function(response) {
+          console.log(response.message);
+        });
+        return; 
       }
 
       if(notAnswer){
-        showNotAnsweredPopup(); 
+        chrome.runtime.sendMessage({ action: 'notAnswerWindow' }, function(response) {
+          console.log(response.message);
+        });
         return;
       }
       // Jika bukan error, cek apakah pesan mengandung teks "sistemmanufaktur"
-      if (answered && answered.textContent.trim() === 'sistemmanufaktur') {
+      if (answered) {
         console.log('Elemen terakhir dengan teks "sistemmanufaktur" ditemukan:', answered);
   
         // Cari tombol "View Answer" di dalam elemen terakhir yang ditemukan
-        const button = answered.querySelector('button.button_dd4f85.lookFilled_dd4f85.colorPrimary_dd4f85.sizeSmall_dd4f85.grow_dd4f85');
+        const button = message.querySelector('button.button_dd4f85.lookFilled_dd4f85.colorPrimary_dd4f85.sizeSmall_dd4f85.grow_dd4f85');
         if (button) {
           console.log('Tombol "View Answer" ditemukan:', button);
   
