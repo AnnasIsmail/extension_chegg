@@ -14,7 +14,7 @@ import subprocess
 import pygetwindow as gw
 
 userManagementIP = "http://umc-production.ap-southeast-1.elasticbeanstalk.com"
-myIp = "http://38.46.219.131:8000"
+myIp = "http://38.46.223.153:8000"
 chrome_windows = gw.getWindowsWithTitle("Google Chrome")
 
 class Item(BaseModel):
