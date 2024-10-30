@@ -174,7 +174,9 @@ def run(item: Item, myIp: str):
         if chrome_windows:
             chrome_window = chrome_windows[0] 
             if chrome_window.isMinimized:
-                chrome_window.restore() 
+                # chrome_window.restore() 
+                chrome_path = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+                subprocess.Popen(chrome_path)
                 time.sleep(1)
         else:
             print("Jendela Google Chrome tidak ditemukan.")
