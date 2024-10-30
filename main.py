@@ -183,7 +183,7 @@ def run(item: Item, myIp: str):
 
         pyautogui.hotkey('ctrl', '1')
         time.sleep(0.5)
-        # pyautogui.press('tab')
+        pyautogui.press('tab')
         pyautogui.hotkey('alt', 'r')
         time.sleep(0.5)
         pyautogui.typewrite(url_post)
