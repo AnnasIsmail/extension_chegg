@@ -177,7 +177,8 @@ def run(item: Item, myIp: str):
                 chrome_window.restore() 
         else:
             print("Jendela Google Chrome tidak ditemukan.")
-        
+
+        time.sleep(0.5)
         pyautogui.hotkey('ctrl', '1')
         time.sleep(0.5)
         # pyautogui.press('tab')
