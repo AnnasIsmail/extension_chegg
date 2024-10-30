@@ -1,4 +1,5 @@
   function findLastElement() {
+    console.log('klik')
     // Ambil semua elemen pesan di daftar, dengan class .messageListItem_d5deea
     const messages = document.querySelectorAll('.messageListItem_d5deea');
     let message = null;

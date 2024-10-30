@@ -40,7 +40,7 @@
     "commands": {
       "_execute_action": {
         "suggested_key": {
-          "default": "Ctrl+Shift+F"
+          "default": "Ctrl+Shift+Q"
         },
         "description": "Run findLastElement function"
       }

@@ -19,6 +19,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 });
 
+chrome.commands.onCommand.addListener((command) => {
+  console.log("Click");
+});
+
+
 // const allowedUrls = [
 //     "discord.com"
 // ];
