@@ -175,10 +175,10 @@ def run(item: Item, myIp: str):
             chrome_window = chrome_windows[0] 
             if chrome_window.isMinimized:
                 chrome_window.restore() 
+                time.sleep(1)
         else:
             print("Jendela Google Chrome tidak ditemukan.")
 
-        time.sleep(0.5)
         pyautogui.hotkey('ctrl', '1')
         time.sleep(0.5)
         # pyautogui.press('tab')
