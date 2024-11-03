@@ -12,7 +12,6 @@ import datetime
 import threading
 import subprocess
 import pygetwindow as gw
-from pyvirtualdisplay import Display
 
 userManagementIP = "http://umc-production.ap-southeast-1.elasticbeanstalk.com"
 myIp = "http://38.46.223.153:8000"
@@ -312,32 +311,27 @@ app = FastAPI()
 
 @app.post("/")
 def create_item(item: Item):
-    try:
-        display = Display(visible=0, size=(1920, 1080))
-        display.start()
-        if run(item, myIp):
-            aws_string = f'https://chegg-bucket2.s3.ap-southeast-1.amazonaws.com/{item.id}.html'
-            while True:
-                queue_item = get_queue(item)
-                if queue_item['message'] == "Error" or queue_item['message'] == "No Queue":
-                    print("Tidak ada antrian yang tersedia. Berhenti menjalankan.")
-                    break
-                else:
-                    try:
-                        run(Item(
-                            userId=queue_item['userId'],
-                            id=queue_item['updateId'],
-                            url=queue_item['url'],
-                            chatId=queue_item['chatId']
-                        ), myIp)
-                    except HTTPException as e:
-                        return {"statusCode": e.status_code, "detail": e.detail}
-                    
-            return {"statusCode": 200, "message": "Success", "aws_string": aws_string}
-        else:
-            raise HTTPException(status_code=500, detail="Failed to run the task.")
-    finally:
-        display.stop()
+    if run(item, myIp):
+        aws_string = f'https://chegg-bucket2.s3.ap-southeast-1.amazonaws.com/{item.id}.html'
+        while True:
+            queue_item = get_queue(item)
+            if queue_item['message'] == "Error" or queue_item['message'] == "No Queue":
+                print("Tidak ada antrian yang tersedia. Berhenti menjalankan.")
+                break
+            else:
+                try:
+                    run(Item(
+                        userId=queue_item['userId'],
+                        id=queue_item['updateId'],
+                        url=queue_item['url'],
+                        chatId=queue_item['chatId']
+                    ), myIp)
+                except HTTPException as e:
+                    return {"statusCode": e.status_code, "detail": e.detail}
+                
+        return {"statusCode": 200, "message": "Success", "aws_string": aws_string}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to run the task.")
         
 @app.post("/test")
 def test_item():
