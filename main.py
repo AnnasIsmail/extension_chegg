@@ -311,6 +311,8 @@ app = FastAPI()
 
 @app.post("/")
 def create_item(item: Item):
+    display = Display(visible=0, size=(1920, 1080))
+    display.start()
     if run(item, myIp):
         aws_string = f'https://chegg-bucket2.s3.ap-southeast-1.amazonaws.com/{item.id}.html'
         while True:
